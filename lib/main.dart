@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: "/screen1", page: ()=>GetScreen_1()),
         GetPage(name: "/screen2", page: ()=>LocalizationScreen()),
+        GetPage(name: "/screen3", page: ()=>CounterExample()),
       ],
       locale: Locale("en" ,"US"),
       translations: languages(),
@@ -168,6 +169,21 @@ class MyApp extends StatelessWidget {
 
                    ),
                  ),
+                 SizedBox(height: height/30,),
+                 InkWell(
+                   onTap: (){
+                     Get.toNamed('/screen3');
+                   },
+                   child: Container(
+                     height: height/20,
+                     width: width/2,
+                     child: Center(child: Text('State Managment GetX')),
+                     decoration: BoxDecoration(
+                       color: Colors.brown,
+                     ),
+
+                   ),
+                 ),
                ],
              ),
            ),
@@ -181,14 +197,86 @@ class MyApp extends StatelessWidget {
 
 
 
-class LocalizationScreen extends StatefulWidget {
-  const LocalizationScreen({super.key});
+
+
+//state managment
+class CounterExample extends StatefulWidget {
+  const CounterExample({super.key});
 
   @override
-  State<LocalizationScreen> createState() => _LocalizationScreenState();
+  State<CounterExample> createState() => _CounterExampleState();
 }
 
-class _LocalizationScreenState extends State<LocalizationScreen> {
+class _CounterExampleState extends State<CounterExample> {
+
+
+  final CounterController counterController = Get.put(CounterController());
+
+  int counter = 0 ;
+  @override
+  Widget build(BuildContext context) {
+    print('Build state managment class');
+    return Scaffold(
+      body: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            InkWell(
+              onTap: (){
+                counterController.decrementNum();
+              },
+              child: Text("-" , style: TextStyle(
+                  fontSize: 30
+              ),)
+            ),
+            Obx((){
+              //print('OBX Build only');
+              return Text("${counterController.counter.toString()} \n ${counterController.dount.toString()}"  , style: TextStyle(
+                  fontSize: 30
+              ),);
+            }),
+            InkWell(
+              onTap: (){
+                counterController.increaseNum();
+              },
+              child: Icon(Icons.add),
+            ),
+          ],
+        )
+      ),
+
+    );
+
+  }
+}
+
+
+class CounterController extends GetxController{
+
+
+  RxInt counter = 0.obs ;
+  RxInt dount = 1.obs;
+
+
+  increaseNum(){
+    counter++;
+    dount--;
+  }
+
+  decrementNum(){
+    counter--;
+    dount++;
+  }
+
+
+}
+
+
+
+//localization
+class LocalizationScreen extends StatelessWidget {
+  const LocalizationScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -219,8 +307,6 @@ class _LocalizationScreenState extends State<LocalizationScreen> {
     );
   }
 }
-
-
 
 class GetScreen_1 extends StatelessWidget {
   const GetScreen_1({super.key});
