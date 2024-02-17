@@ -15,6 +15,9 @@ class MyApp extends StatelessWidget {
    final  height  = MediaQuery.of(context).size.height;
   final width =  MediaQuery.of(context).size.width;
     return GetMaterialApp(
+      getPages: [
+        GetPage(name: "/screen1", page: ()=>GetScreen_1())
+      ],
       home: Scaffold(
        body: SafeArea(
          child:SingleChildScrollView(
@@ -126,6 +129,24 @@ class MyApp extends StatelessWidget {
 
                    ),
                  ),
+                 SizedBox(height: height/30,),
+                 InkWell(
+                   onTap: (){
+                     Get.toNamed("/screen1" , arguments: [
+                       'Hamza Javaid',
+                       "Kara noyan"
+                     ]);
+                   },
+                   child: Container(
+                     height: height/20,
+                     width: width/2,
+                     child: Center(child: Text('Routes GetX')),
+                     decoration: BoxDecoration(
+                       color: Colors.cyanAccent.shade100,
+                     ),
+
+                   ),
+                 ),
                ],
              ),
            ),
@@ -135,3 +156,20 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+class GetScreen_1 extends StatelessWidget {
+  const GetScreen_1({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Screen 1 '),
+      ),
+      body: Center(
+        child: Text('This is Data : ${Get.arguments[0]}   ,  ${Get.arguments[1]} '),
+      ),
+    );
+  }
+}
+
