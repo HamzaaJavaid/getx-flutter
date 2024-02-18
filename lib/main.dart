@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: "/screen1", page: ()=>GetScreen_1()),
         GetPage(name: "/screen2", page: ()=>LocalizationScreen()),
         GetPage(name: "/screen3", page: ()=>CounterExample()),
+        GetPage(name: "/screen4", page: ()=> favouriteScreen()),
       ],
       locale: Locale("en" ,"US"),
       translations: languages(),
@@ -184,6 +185,21 @@ class MyApp extends StatelessWidget {
 
                    ),
                  ),
+                 SizedBox(height: height/30,),
+                 InkWell(
+                   onTap: (){
+                     Get.toNamed('/screen4');
+                   },
+                   child: Container(
+                     height: height/20,
+                     width: width/2,
+                     child: Center(child: Text('Favourite app GetX')),
+                     decoration: BoxDecoration(
+                       color: Colors.orangeAccent,
+                     ),
+
+                   ),
+                 ),
                ],
              ),
            ),
@@ -193,6 +209,53 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+
+
+//favourite app state managment
+
+class favouriteScreen extends StatefulWidget {
+  const favouriteScreen({super.key});
+
+  @override
+  State<favouriteScreen> createState() => _favouriteScreenState();
+}
+
+class _favouriteScreenState extends State<favouriteScreen> {
+  @override
+  Widget build(BuildContext context) {
+
+    final  height  = MediaQuery.of(context).size.height;
+    final width =  MediaQuery.of(context).size.width;
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: height/10,),
+            Text('List'),
+            Container(
+              height: height/3,
+              width: width,
+              color: Colors.orangeAccent,
+            ),
+            SizedBox(height: height/10,),
+            Text('Cart'),
+            Container(
+              height: height/3,
+              width: width,
+              color: Colors.orangeAccent,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 
 
 
@@ -218,29 +281,73 @@ class _CounterExampleState extends State<CounterExample> {
     print('Build state managment class');
     return Scaffold(
       body: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            InkWell(
-              onTap: (){
-                counterController.decrementNum();
-              },
-              child: Text("-" , style: TextStyle(
-                  fontSize: 30
-              ),)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                InkWell(
+                  onTap: (){
+                    counterController.decrementNum();
+                  },
+                  child: Text("-" , style: TextStyle(
+                      fontSize: 30
+                  ),)
+                ),
+                Obx((){
+                  //print('OBX Build only');
+                  return Text("${counterController.counter.toString()} \n ${counterController.dount.toString()}"  , style: TextStyle(
+                      fontSize: 30
+                  ),);
+                }),
+                InkWell(
+                  onTap: (){
+                    counterController.increaseNum();
+                  },
+                  child: Icon(Icons.add),
+                ),
+              ],
             ),
-            Obx((){
-              //print('OBX Build only');
-              return Text("${counterController.counter.toString()} \n ${counterController.dount.toString()}"  , style: TextStyle(
-                  fontSize: 30
-              ),);
-            }),
-            InkWell(
-              onTap: (){
-                counterController.increaseNum();
-              },
-              child: Icon(Icons.add),
-            ),
+           Obx(() =>  Container(
+             height: Get.height/10,
+             width: counterController.opacity.value,
+             decoration: BoxDecoration(
+               color: Colors.blue
+                   //.withOpacity(counterController.opacity.value-(counterController.opacity.value-0.9)),
+             ),
+
+           ) ,),
+           Obx(() =>  Slider(
+               value: counterController.opacity.value ,
+               min: 30,
+               max: 300,
+               divisions: 20,
+               activeColor: Colors.green,
+               inactiveColor: Colors.orange,
+               label: 'Set volume value',
+               onChanged: (double newValue) {
+                 counterController.setNewOpacity(newValue);
+               },
+               semanticFormatterCallback: (double newValue) {
+                 return '${newValue.round()} dollars';
+               }
+           ),),
+            Obx(()=> Transform.scale(
+                scale: 2,
+                child: Switch(
+                  onChanged: (value){
+                   // print('Toogle');
+                    counterController.setNewToggle(value);
+                  },
+                  value: counterController.toggle.value,
+                  activeColor: Colors.blue,
+                  activeTrackColor: Colors.yellow,
+                  inactiveThumbColor: Colors.redAccent,
+                  inactiveTrackColor: Colors.orange,
+                )
+            )),
+            //Text('$textValue', style: TextStyle(fontSize: 20),)
           ],
         )
       ),
@@ -256,6 +363,17 @@ class CounterController extends GetxController{
 
   RxInt counter = 0.obs ;
   RxInt dount = 1.obs;
+  RxDouble opacity = 1.00.obs;
+  RxBool toggle  = false.obs;
+
+
+  setNewToggle(bool value){
+    toggle.value = value;
+  }
+
+  setNewOpacity(double x){
+    opacity.value = x;
+  }
 
 
   increaseNum(){
