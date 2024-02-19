@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -225,35 +227,114 @@ class favouriteScreen extends StatefulWidget {
   State<favouriteScreen> createState() => _favouriteScreenState();
 }
 
+//favourite screen cart
 class _favouriteScreenState extends State<favouriteScreen> {
+  List<cartStructure> listOfthings = [
+    cartStructure("Hoddie", "22"  ,false),
+    cartStructure("cap", "2" ,false),
+    cartStructure("shirt", "23", false),
+    cartStructure("pent", "12" , false),
+    cartStructure("trouser", "122",false),
+
+  ];
+  List<cartStructure> cart=[];
+  
+  final FavouriteScreenGetX _favouriteScreenGetX = Get.put(FavouriteScreenGetX());
+
   @override
   Widget build(BuildContext context) {
 
     final  height  = MediaQuery.of(context).size.height;
     final width =  MediaQuery.of(context).size.width;
+    print('Build favoutire');
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: height/10,),
-            Text('List'),
-            Container(
-              height: height/3,
-              width: width,
-              color: Colors.orangeAccent,
-            ),
-            SizedBox(height: height/10,),
-            Text('Cart'),
-            Container(
-              height: height/3,
-              width: width,
-              color: Colors.orangeAccent,
-            )
-          ],
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Column(
+            children: [
+              SizedBox(height: height/10,),
+              Text('List'),
+              Obx(() =>  Container(
+                  height: height/2,
+                  width: width,
+                  //color: Colors.orangeAccent,
+                  child: ListView.builder(
+                    itemCount: _favouriteScreenGetX.listOfthings.length,
+                    itemBuilder: (context,index){
+                      return InkWell(
+                          onTap: (){
+                            _favouriteScreenGetX.makeFavourite(_favouriteScreenGetX.listOfthings[index], index);
+                          },
+                          child: ListTile(
+                            title: Text(_favouriteScreenGetX.listOfthings[index].name),
+                            subtitle: Text(_favouriteScreenGetX.listOfthings[index].price),
+                            trailing: Icon(Icons.favorite_border),
+                          ));
+                    },
+                  )
+              ),),
+              SizedBox(height: height/10,),
+             Text('Cart'),
+             Obx(() =>  Container(
+               height: height/3,
+               width: width,
+               //color: Colors.orangeAccent,
+               child: ListView.builder(
+                 itemCount: _favouriteScreenGetX.cartList.length,
+                 itemBuilder: (context,index){
+                   return InkWell(
+                       onTap: (){
+                         _favouriteScreenGetX.makeUnFavourite(_favouriteScreenGetX.cartList[index], index);
+                       },
+                       child : ListTile(
+                         title: Text(_favouriteScreenGetX.cartList[index].name),
+                         subtitle: Text(_favouriteScreenGetX.cartList[index].price),
+                         trailing: Icon(Icons.favorite),
+                       )
+                   );
+                 },
+               ),
+             ),)
+            ],
+          ),
         ),
       ),
     );
   }
+}
+
+class cartStructure{
+
+  String name ;
+  String price ;
+  bool isFavourite;
+
+  cartStructure(this.name , this.price ,this.isFavourite);
+
+}
+
+class FavouriteScreenGetX extends GetxController{
+  RxList cartList = [].obs;
+  RxList listOfthings = [
+    cartStructure("Hoddie", "22"  ,false),
+    cartStructure("cap", "2" ,false),
+    cartStructure("shirt", "23", false),
+    cartStructure("pent", "12" , false),
+    cartStructure("trouser", "122",false),
+
+  ].obs;
+
+  makeFavourite(cartStructure , int index){
+    cartList.add(cartStructure);
+    listOfthings.removeAt(index);
+  }
+  makeUnFavourite(cartStructure , int index){
+    listOfthings.add(cartStructure);
+    cartList.removeAt(index);
+  }
+
+
+
 }
 
 
@@ -269,7 +350,6 @@ class CounterExample extends StatefulWidget {
   @override
   State<CounterExample> createState() => _CounterExampleState();
 }
-
 class _CounterExampleState extends State<CounterExample> {
 
 
@@ -320,8 +400,8 @@ class _CounterExampleState extends State<CounterExample> {
            ) ,),
            Obx(() =>  Slider(
                value: counterController.opacity.value ,
-               min: 30,
-               max: 300,
+               min: 1,
+               max: 30,
                divisions: 20,
                activeColor: Colors.green,
                inactiveColor: Colors.orange,
@@ -356,8 +436,6 @@ class _CounterExampleState extends State<CounterExample> {
 
   }
 }
-
-
 class CounterController extends GetxController{
 
 
